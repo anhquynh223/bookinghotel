@@ -1,0 +1,49 @@
+{% extends 'home.html' %}
+
+{% block title %}
+  Chi tiết đặt phòng
+{% endblock %}
+
+{% block content %}
+<h1 class="text-center mt-2">Chi tiết đặt phòng</h1>
+<div class="d-flex justify-content-center pb-2">
+  <div style="width: 80%;">
+    <p class="text-center">Thời gian: {{ order.thoi_gian|date:"H:i, d/m/yy" }}</p>
+    <p class="text-center">{{ order.phong }}</p>
+    <p class="text-center">Khách hàng: {{ order.khach_hang.first_name }} {{ order.khach_hang.last_name }}</p>
+    <p class="text-center">Ngày nhận: {{ order.ngay_nhan|date:"d/m/yy" }}</p>
+    <p class="text-center">Ngày trả: {{ order.ngay_tra|date:"d/m/yy" }}</p>
+    <p class="text-center">Số khách: {{ order.so_khach }} người</p>
+    <p class="text-center">Phương thức thanh toán: {{ order.phuong_thuc }}</p>
+    {% if order.so_tai_khoan %}
+    <p class="text-center">Số tài khoản: {{ order.so_tai_khoan }}</p>
+    {% endif %}
+    {% if order.ngan_hang %}
+    <p class="text-center">Ngân hàng: {{ order.ngan_hang }}</p>
+    {% endif %}
+    <p class="text-center">Tổng tiền: {{ order.tong_tien }}VND</p>
+    <p class="text-center">Trạng thái: {{ order.trang_thai }}</p>
+    {% if order.trang_thai == 'Chờ xác nhận' or order.trang_thai == 'Đã xác nhận' %}
+    <center>
+      <form method="POST" form-action>
+        {% csrf_token %}
+        <input hidden type="text" name="action" value="{% if order.trang_thai == 'Chờ xác nhận' %}confirm{% endif %}{% if order.trang_thai == 'Đã xác nhận' %}complete{% endif %}">
+        <button class="btn btn-primary btn-action" type="button">
+          {% if order.trang_thai == 'Chờ xác nhận' %}
+          Xác nhận
+          {% endif %}
+          {% if order.trang_thai == 'Đã xác nhận' %}
+          Hoàn thành
+          {% endif %}
+        </button>
+      </form>
+    </center>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+{% load static %}
+<script src="{% static 'js/order_detail.js' %}"></script>
+{% endblock %}
